@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowScripts</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Press Start 2P', cursive; /* Growtopia-like font */
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .menu {
+            width: 250px;
+            background-color: #1a1a1a;
+            padding: 20px;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .menu ul li {
+            margin-bottom: 15px;
+        }
+
+        .menu ul li a {
+            text-decoration: none;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .menu ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .menu .active {
+            background-color: #303030;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .menu .account {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .content h1 {
+            color: #e5b800;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+        }
+
+        .modal-content h2 {
+            color: #e5b800;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #303030;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            background-color: #e5b800;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .modal-content button:hover {
+            background-color: #ffcc00;
+        }
+
+        .modal-content .close {
+            background-color: #d00000;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        /* Button Styles for Login/Register/Logout */
+        .account button {
+            background-color: #e5b800; /* Yellow background */
+            color: black;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin: 10px 0;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .account button:hover {
+            background-color: #ffcc00;
+            transform: scale(1.1);
+        }
+
+        .account button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="menu">
+            <ul>
+                <li><a href="html1.html" class="active">Home</a></li>
+                <li><a href="html2.html">Create Script</a></li>
+                <li><a href="html4.html">My Scripts</a></li>
+            </ul>
+            <div class="account">
+                <button id="loginButton">Login</button>
+                <button id="registerButton">Register</button>
+                <button id="logoutButton" style="display: none;">Logout</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <h1>Welcome to GrowScripts</h1>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Log In</h2>
+            <input type="text" id="loginEmail" placeholder="Enter your email">
+            <input type="password" id="loginPassword" placeholder="Enter your password">
+            <button id="loginSubmit">Sign In</button>
+            <button class="close" id="closeLoginModal">Close</button>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h2>Register</h2>
+            <input type="text" id="registerUsername" placeholder="Enter your desired username">
+            <input type="text" id="registerEmail" placeholder="Enter your email">
+            <input type="password" id="registerPassword" placeholder="Enter your password">
+            <input type="password" id="confirmPassword" placeholder="Re-enter your password">
+            <button id="registerSubmit">Register</button>
+            <button class="close" id="closeRegisterModal">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const loginSubmit = document.getElementById('loginSubmit');
+        const registerSubmit = document.getElementById('registerSubmit');
+
+        // Open modals
+        loginButton.addEventListener('click', () => {
+            loginModal.classList.add('active');
+        });
+
+        registerButton.addEventListener('click', () => {
+            registerModal.classList.add('active');
+        });
+
+        // Close modals
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.remove('active');
+        });
+
+        closeRegisterModal.addEventListener('click', () => {
+            registerModal.classList.remove('active');
+        });
+
+        // Login functionality
+        loginSubmit.addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem(email));
+            if (user && user.password === password) {
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                alert(`Welcome, ${user.username}!`);
+                loginModal.classList.remove('active');
+                updateLoginStatus(user);
+            } else {
+                alert('Invalid email or password.');
+            }
+        });
+
+        // Register functionality
+        registerSubmit.addEventListener('click', () => {
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!username || !email || !password || !confirmPassword) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            const user = { username, email, password };
+            localStorage.setItem(email, JSON.stringify(user));
+            alert('Registration successful!');
+            registerModal.classList.remove('active');
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('loggedInUser');
+            alert('You have been logged out.');
+            resetLoginStatus();
+        });
+
+        function updateLoginStatus(user) {
+            loginButton.style.display = 'none';
+            registerButton.style.display = 'none';
+            logoutButton.style.display = 'block';
+            loginButton.textContent = `Welcome, ${user.username}`;
+        }
+
+        function resetLoginStatus() {
+            loginButton.style.display = 'block';
+            registerButton.style.display = 'block';
+            logoutButton.style.display = 'none';
+            loginButton.textContent = 'Login';
+        }
+
+        window.onload = () => {
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (loggedInUser) {
+                updateLoginStatus(loggedInUser);
+            }
+        };
+    </script>
+
+</body>
+</html>
